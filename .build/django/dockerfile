@@ -1,0 +1,4 @@
+FROM node:alpine
+RUN apk add python3 && ln  -sg python3 /usr/bin/python
+WORKDIR /code/
+COPY . /code/

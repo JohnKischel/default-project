@@ -1,0 +1,44 @@
+version: "3.9"
+service:
+
+  angular:
+    build:
+      image: "${PROJECT_NAME}-angular"
+      context: .build/angular
+      dockerfile: dockerfile
+      volume: .build/angular:/code/
+      command: /bin/sh entrypoint.sh
+      environment:
+        - "DJANGO_SETTINGS_MODULE=PROJECT_NAME.settings"
+        # List apps in one comment i.e "APPS='app1 app2 app3'"
+        - "APPS='main'"
+      env_file:
+        - environment.conf
+
+  django:
+    image: "${PROJECT_NAME}-django"
+    context: .build/django
+    dockerfile: dockerfile
+    volume: .build/django:/code/
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command: /bin/sh entrypoint.sh
+    env_file:
+      - environment.conf
+
+  postgres:
+    image: "postgres"
+    restart: always
+    ports:
+      - "5432:5432"
+    volumes:
+      - .build/postgres/data:/var/lib/postgresql/data/pgdata:rw
+    environment:
+      - POSTGRES_HOST_AUTH_METHOD=trust
+      - PGDATA=/var/lib/postgresql/data/pgdata
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5

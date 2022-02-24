@@ -1,0 +1,4 @@
+FROM node:alpine
+WORKDIR /code/
+RUN npm install --save @angular/cli @angular/material @angular/cdk
+COPY . /code/

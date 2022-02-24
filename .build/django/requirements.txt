@@ -1,0 +1,19 @@
+Django
+asgiref
+pytz
+sqlparse
+typing-extensions
+jsonfield
+Pillow
+
+# POSTGRES
+psycopg2
+whitenoise
+
+# WSGI Server
+gunicorn
+
+# REST FRAMEWORK
+djangorestframework
+django-filter
+django-cors-headers
