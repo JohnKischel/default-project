@@ -8,10 +8,6 @@ services:
     volumes:
       - .build/angular:/code/
     command: /bin/sh entrypoint.sh
-    environment:
-      - "DJANGO_SETTINGS_MODULE=PROJECT_NAME.settings"
-      # List apps in one comment i.e "APPS='app1 app2 app3'"
-      - "APPS='main'"
     env_file:
       - .build/angular/environment.conf
 
@@ -26,6 +22,13 @@ services:
       postgres:
         condition: service_healthy
     command: /bin/sh entrypoint.sh
+    environment:
+      - "DJANGO_SETTINGS_MODULE=${PROJECT_NAME}.settings"
+      # List apps in one comment i.e 'APPS="test", "test1", "test2"' #IMPORTANT a space between ,
+      - PROJECT_NAME=default
+      - THIRD_PARTY_APPS=['api', "main"]
+      - ALLOWED_HOSTS=["*"]
+
     env_file:
       - .build/django/environment.conf
 
@@ -39,6 +42,8 @@ services:
     environment:
       - POSTGRES_HOST_AUTH_METHOD=trust
       - PGDATA=/var/lib/postgresql/data/pgdata
+      - POSTGRES_USER=default
+      - POSTGRES_PASSWORD=default
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 5s
